@@ -1,11 +1,8 @@
-const sum = (a:number , b:number) : number => {
-    return a + b;
-}
+import express from "express";
+import server from "./server";
+import { PORT } from "./config/envs"
+import  router  from "./routes";
 
-console.log(sum(1,4));
-
-const otraSum = (a:string, b:string) : string => {
-    return a + b;
-}
-
-console.log(otraSum("hola ", "como estas"));
+server.use(express.json());
+server.use(router);
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
