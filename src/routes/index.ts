@@ -1,13 +1,10 @@
-import { Router, Request, Response } from "express";
-import { createUsers, getUsers, deleteUsers } from "../controllers/usersController";
-import auth from "../middlewares/auth";
+import { Router } from "express";
+import userRouter from "./users";
+import appointmentRouter from "./appointments";
 
 const router = Router();
 
-router.get("/users", auth, getUsers);
-
-router.post("/users", createUsers);
-
-router.delete("/users", deleteUsers);
+router.use("/users", userRouter)
+router.use("/appointments", appointmentRouter)
 
 export default router;

@@ -1,1 +1,0 @@
-{"version":3,"file":"IUser.d.ts","sourceRoot":"","sources":["../../src/interfaces/IUser.ts"],"names":[],"mappings":"AAAA,UAAU,KAAK;IACX,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE,MAAM,CAAC;IACd,MAAM,EAAE,OAAO,CAAC;CACnB;AAED,eAAe,KAAK,CAAC"}
