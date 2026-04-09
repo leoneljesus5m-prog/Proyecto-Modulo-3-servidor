@@ -11,10 +11,10 @@ export const getUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const user = getUserByIdService(Number(id));
+    const user = await getUserByIdService(Number(id));
     if(!user){
       res.status(404).json({ message: "Usuario no encontrado" });
     }else {
