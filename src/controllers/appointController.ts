@@ -1,18 +1,25 @@
 import { Request, Response } from "express";
-import { createAppointmentService, cancelAppointmentService } from "../services/appointmentService"
+import { createAppointmentService, cancelAppointmentService, getAllAppointments, getAppointmentById } from "../services/appointmentService"
+import AppointmentDto from "../dto/AppointmentDto";
 
 
 export const getUserAppointments = (req: Request, res: Response) => {
     try {
-        res.status(200).json({ message: "Obtener el listado de todos los turnos de todos los usuarios."});
+        const allUsersAppointments = getAllAppointments();
+        res.status(200).json(allUsersAppointments);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los turnos"});
     }
 }
 
-export const getAppointmentsById = (req: Request, res: Response) => {
+export const getAppointmentsById = async (req: Request, res: Response) => {
     try {
-        res.status(200).json({message : "Obtener el detalle de un turno específico."});
+        const { id } = req.params;
+        const appontmentId = Number(id);
+        if (isNaN(appontmentId)){
+            return res.status(400).json({ message: "ID de turno inválido" });
+        }
+        res.status(200).json(await getAppointmentById(appontmentId));
     } catch (error) {
         res.status(500).json({ message: "Error al obtener el turno"});
     }
@@ -20,7 +27,7 @@ export const getAppointmentsById = (req: Request, res: Response) => {
 
 export const createAppointment = async (req: Request, res: Response) => {
     try {
-        const appointmentData = req.body;
+        const appointmentData: AppointmentDto = req.body;
         await createAppointmentService(appointmentData);
         res.status(201).json({ message: "Turno agendado correctamente" });
     } catch (error) {

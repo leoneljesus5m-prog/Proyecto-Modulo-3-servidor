@@ -36,7 +36,7 @@ export const createUserService = async (userData: UserDto): Promise<IUser> => {
         id: id++,
         name: userData.name,
         email: userData.email,
-        birthdate: new Date(userData.birthdate),
+        birthdate: userData.birthdate,
         nDni: userData.nDni,
         credentialsId: credentialsId
     }

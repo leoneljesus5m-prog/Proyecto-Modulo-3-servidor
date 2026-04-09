@@ -3,12 +3,12 @@ enum Status {
   CANCELLED = "cancelled",
 }
 
-interface IAppointment {
-  id: number;
+interface AppointmentDto {
   date: Date;
   time: string;
   userId: number;
   status: Status;
 }
 
-export default IAppointment ;
+export default AppointmentDto;
+export { Status };

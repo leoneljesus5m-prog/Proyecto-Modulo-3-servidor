@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import IUser from "../interfaces/IUser";
-import { getUsersService, createUserService } from "../services/userService";
+import { getUsersService, createUserService, getUserByIdService } from "../services/userService";
 import UserDto from "../dto/UserDto";
 
 export const getUser = async (req: Request, res: Response) => {
@@ -14,9 +13,13 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const getUserById = (req: Request, res: Response) => {
   try {
-    res
-      .status(200)
-      .json({ message: "Obtener el detalle de un usuario específico." });
+    const id = req.params.id;
+    const user = getUserByIdService(Number(id));
+    if(!user){
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }else {
+      res.status(200).json(user);
+    }
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el usuario" });
   }
