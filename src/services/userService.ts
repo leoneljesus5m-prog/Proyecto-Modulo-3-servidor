@@ -1,45 +1,31 @@
 import IUser from "../interfaces/IUser";
 import UserDto from "../dto/UserDto";
 import { createCredentialsService } from "./credentialService";
+import { User } from "../entities/User";
+import { AppDataSource } from "../config/dataSource";
 
-let users: IUser[] = [
-    {
-        id: 1,
-        name: "Leonel Jesus",
-        email: "leonel@test.com",
-        birthdate: new Date("1998-05-20"),
-        nDni: 12345678,
-        credentialsId: 1
-    },
-    {
-        id: 2,
-        name: "María García",
-        email: "maria@test.com",
-        birthdate: new Date("1995-12-10"),
-        nDni: 12345678,
-        credentialsId: 2
-    }
-];
-let id: number = 1;
+const userRepository = AppDataSource.getRepository(User);
 
-export const getUsersService = async ():Promise<IUser[]> => {
+
+export const getUsersService = async ():Promise<User[]>=> {
+    const users = await userRepository.find({relations: {
+        appointments: true        
+    }});
     return users;
 }
 
 export const getUserByIdService = async (id: number)  => {
-    return users.find(user => user.id === id);
+    return await userRepository.findOne({ where: { id } });
 }
 
-export const createUserService = async (userData: UserDto): Promise<IUser> => {
-    const credentialsId = await createCredentialsService(userData.username, userData.password);
-    const newUser: IUser = {
-        id: id++,
+export const createUserService = async (userData: UserDto): Promise<User> => {
+    const newCredential = await createCredentialsService(userData.username, userData.password);
+    const newUser = userRepository.create({ 
         name: userData.name,
         email: userData.email,
-        birthdate: userData.birthdate,
+        birthdate: new Date (userData.birthdate),
         nDni: userData.nDni,
-        credentialsId: credentialsId
-    }
-    users.push(newUser);
-    return newUser;
+        credential: newCredential
+    });
+    return await userRepository.save(newUser);
 }

@@ -1,28 +1,18 @@
-import ICredential from "../interfaces/ICredential";
+import { Credential } from "../entities/Credential";
+import { AppDataSource } from "../config/dataSource"; 
 
-let credentials: Array<ICredential> = [];
-let id: number = 1;
+const credentialRepository = AppDataSource.getRepository(Credential);
 
 export const createCredentialsService = async (
   username: string,
   password: string,
-): Promise<number> => {
-  const newCredential = {
-    id: id++,
-    username: username,
-    password: password,
-  };
-  credentials.push(newCredential);
-  return newCredential.id;
+): Promise<Credential> => {
+  const newCredential = credentialRepository.create({ username, password });
+  await credentialRepository.save(newCredential);
+  return newCredential;
 };
 
-export const validateCredentialsService = async (
-  username: string,
-  password: string,
-): Promise<number | undefined> => {
-  const credentialsFound = credentials.find((cred) => cred.username === username);
-  if (credentialsFound && credentialsFound.password === password) {
-    return credentialsFound.id;
-  }
-  return undefined;
+export const validateCredentialsService = async (username: string, password: string,): Promise<number | undefined> => {
+  const credentialsFound = await credentialRepository.findOneBy({username, password});
+  return credentialsFound ? credentialsFound.id : undefined;
 };
