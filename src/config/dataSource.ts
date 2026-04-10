@@ -1,16 +1,18 @@
 import { DataSource } from "typeorm";
 import { DB_PASSWORD } from "./envs";
+import { User, Credential, Appointment } from "../entities";
+
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
   port: 5432,
   username: "postgres",
-  password: `${DB_PASSWORD}`,
+  password: String(DB_PASSWORD),
   database: "module_3",
   synchronize: true,
   logging: false,
-  entities: [],
+  entities: [User, Credential, Appointment],
   subscribers: [],
   migrations: [],
 });

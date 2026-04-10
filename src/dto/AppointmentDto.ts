@@ -1,7 +1,4 @@
-enum Status {
-  ACTIVE = "active",
-  CANCELLED = "cancelled",
-}
+import { Status } from "../interfaces/iAppointment";
 
 interface AppointmentDto {
   date: Date;
