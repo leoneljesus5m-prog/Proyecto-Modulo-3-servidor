@@ -1,7 +1,7 @@
 interface UserDto {
   name: string;
   email: string;
-  birthdate: Date;
+  birthdate: string;
   nDni: number;
   username: string;
   password: string;
