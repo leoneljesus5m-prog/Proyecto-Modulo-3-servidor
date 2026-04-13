@@ -2,15 +2,15 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Status } from "../interfaces/iAppointment";
 import { User } from "./User";
 
-@Entity()
+@Entity({ name: "appointments" })
 export class Appointment {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ type: "date", default: new Date() })
     date!: Date;
 
-    @Column()
+    @Column({ type: "time" })
     time!: string;
 
     @Column({

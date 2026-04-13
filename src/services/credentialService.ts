@@ -1,18 +1,33 @@
 import { Credential } from "../entities/Credential";
-import { AppDataSource } from "../config/dataSource"; 
-
-const credentialRepository = AppDataSource.getRepository(Credential);
+import { AppDataSource } from "../config/dataSource";
 
 export const createCredentialsService = async (
   username: string,
   password: string,
-): Promise<Credential> => {
-  const newCredential = credentialRepository.create({ username, password });
-  await credentialRepository.save(newCredential);
-  return newCredential;
+): Promise<Credential | number | undefined> => {
+  try {
+    const newCredential = await AppDataSource.manager.save(Credential, {
+      username,
+      password,
+    });
+    console.log(newCredential);
+    return newCredential.id;
+  } catch (error: any) {
+    throw new Error(error);
+  }
 };
 
-export const validateCredentialsService = async (username: string, password: string,): Promise<number | undefined> => {
-  const credentialsFound = await credentialRepository.findOneBy({username, password});
-  return credentialsFound ? credentialsFound.id : undefined;
+export const validateCredentialsService = async (
+  username: string,
+  password: string,
+): Promise<number | undefined> => {
+  try {
+    const credential = await AppDataSource.manager.getRepository(Credential).findOneBy({ username });
+    if (!credential) {
+      throw new Error("Credential not found");
+    }
+    return credential.id;
+    } catch (error: any) {
+    throw new Error(error);
+  }
 };

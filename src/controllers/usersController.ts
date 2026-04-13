@@ -30,8 +30,8 @@ export const registerUser = async (req: Request, res: Response) => {
     const userData: UserDto = req.body;
     const newUser = await createUserService(userData);
     res.status(201).json(newUser);
-  } catch (error) {
-    res.status(400).json({ message: "Error al registrar el usuario" });
+  } catch (error: any) {
+    res.status(400).json({message: error.message});
   }
 };
 

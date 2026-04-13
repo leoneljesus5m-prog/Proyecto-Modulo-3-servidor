@@ -9,25 +9,25 @@ import {
 import { Credential } from "./Credential";
 import { Appointment } from "./Appointment";
 
-@Entity()
+@Entity({ name: "users" })
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 100 })
   name!: string;
 
-  @Column()
+  @Column({ unique: true , type: "varchar" , length: 200})
   email!: string;
 
-  @Column({ type: "date" })
+  @Column({ type: "date", default: new Date() })
   birthdate!: Date;
 
-  @Column()
+  @Column({ unique: true , type: "int" })
   nDni!: number;
 
-  @OneToOne(() => Credential, (credential) => credential.user)
-  @JoinColumn()
+  @OneToOne(() => Credential)
+  @JoinColumn({ name: "credentialId" })
   credential!: Credential;
 
   @OneToMany(() => Appointment, (appointment) => appointment.user)

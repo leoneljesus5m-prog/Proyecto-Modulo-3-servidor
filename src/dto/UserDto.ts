@@ -3,6 +3,7 @@ interface UserDto {
   email: string;
   birthdate: string;
   nDni: number;
+  appointments: [];
   username: string;
   password: string;
 }
