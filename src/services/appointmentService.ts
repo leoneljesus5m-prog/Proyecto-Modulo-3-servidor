@@ -1,42 +1,48 @@
 import AppointmentDto, { Status } from "../dto/AppointmentDto";
-import IAppointment from "../interfaces/iAppointment";
+import { Appointment, User, Credential } from "../entities";
+import { AppDataSource } from "../config/dataSource";
 
-let appointments: IAppointment[] = [
-  {
-    id: 1,
-    date: new Date("2026-04-25"),
-    time: "10:30",
-    userId: 1,
-    status: Status.ACTIVE,
-  },
-];
-
-let appointmentIdCounter = 2;
-
-export const getAllAppointments = (): IAppointment[] => {
-  return appointments;
+export const getAllAppointments = async (): Promise<Appointment[]> => {
+  return await AppDataSource.manager.getRepository(Appointment).find({relations: {
+    user: {credential: true}
+  }});
 };
 
-export const getAppointmentById = async (id: number): Promise<IAppointment | undefined> => {
-  return appointments.find((app) => app.id === id);
+export const getAppointmentById = async (
+  id: number,
+): Promise<Appointment | null> => {
+  return await AppDataSource.manager
+    .getRepository(Appointment)
+    .findOne({
+      where: { id },
+      relations: {
+        user: { credential: true }
+      } 
+    });
 };
 
 export const createAppointmentService = async (
   appointmentData: AppointmentDto,
-): Promise<IAppointment> => {
-  const newAppointment: IAppointment = {
-    id: appointmentIdCounter++,
+): Promise<Appointment> => {
+  const user = await AppDataSource.manager
+    .getRepository(User)
+    .findOne({ where: { id: appointmentData.userId } });
+  if (!user) throw new Error("Usuario no encontrado");
+
+  const newAppointment = AppDataSource.manager.getRepository(Appointment).create({
     date: new Date(appointmentData.date),
     time: appointmentData.time,
-    userId: appointmentData.userId,
     status: Status.ACTIVE,
-  };
-  appointments.push(newAppointment);
+    user: user, 
+  });
+  await AppDataSource.manager.getRepository(Appointment).save(newAppointment);
   return newAppointment;
 };
 
 export const cancelAppointmentService = async (id: number): Promise<void> => {
-  const appointment = appointments.find((app) => app.id === id);
+  const appointment = await AppDataSource.manager
+    .getRepository(Appointment)
+    .findOne({ where: { id } });
   if (!appointment) {
     throw new Error("Turno no encontrado");
   }

@@ -3,9 +3,9 @@ import { createAppointmentService, cancelAppointmentService, getAllAppointments,
 import AppointmentDto from "../dto/AppointmentDto";
 
 
-export const getUserAppointments = (req: Request, res: Response) => {
+export const getUserAppointments = async (req: Request, res: Response) => {
     try {
-        const allUsersAppointments = getAllAppointments();
+        const allUsersAppointments = await getAllAppointments();
         res.status(200).json(allUsersAppointments);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los turnos"});
@@ -30,6 +30,7 @@ export const createAppointment = async (req: Request, res: Response) => {
         const appointmentData: AppointmentDto = req.body;
         await createAppointmentService(appointmentData);
         res.status(201).json({ message: "Turno agendado correctamente" });
+        res.json(appointmentData);
     } catch (error) {
         res.status(500).json({ message: "Error al agendar el turno" });
     }
