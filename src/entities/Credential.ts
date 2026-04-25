@@ -8,6 +8,6 @@ export class Credential {
   @Column({ unique: true })
   username!: string;
 
-  @Column({ select: false })
+  @Column()
   password!: string;
 }

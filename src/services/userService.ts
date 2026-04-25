@@ -10,6 +10,12 @@ export const getUsersService = async (): Promise<User[]> => {
     const users = await AppDataSource.manager.getRepository(User).find({
       relations: {
         credential: true
+      },
+      select: {
+        credential: {
+          id: true,
+          username: true
+        }
       }
     });
     return users;

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { getUsersService, createUserService, getUserByIdService } from "../services/userService";
+import { getUsersService, createUserService, getUserByIdService, loginUserService } from "../services/userService";
 import UserDto from "../dto/UserDto";
+import ICredential from "../interfaces/ICredential";
 
 export const getUser = async (req: Request, res: Response) => {
   try {
@@ -35,10 +36,18 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response) => {
   try {
-    res.status(200).json({ message: "Login del usuario a la aplicación." });
-  } catch (error) {
-    res.status(500).json({ message: "Error al iniciar sesión" });
+    const { username, password } = req.body
+    if(!username || !password){
+      res.status(400).json({message: "Bad Request"})
+    }
+    const credentialId = await loginUserService({username, password})
+    res.status(200).json(credentialId)
+  } catch (error: any) {
+    res.status(400).json({ 
+    message: error.message,
+    internalError: error
+  });
   }
 };

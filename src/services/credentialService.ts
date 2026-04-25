@@ -1,5 +1,6 @@
 import { Credential } from "../entities/Credential";
 import { AppDataSource } from "../config/dataSource";
+import console from "console";
 
 export const createCredentialsService = async (
   username: string,
@@ -22,12 +23,13 @@ export const validateCredentialsService = async (
   password: string,
 ): Promise<number | undefined> => {
   try {
-    const credential = await AppDataSource.manager.getRepository(Credential).findOneBy({ username });
-    if (!credential) {
-      throw new Error("Credential not found");
+    const credential = await AppDataSource.getRepository(Credential).findOneBy({ username });
+    if (!credential || !password ||credential.password?.trim() !== password?.trim()) {
+      console.log("FALLÓ LA COMPARACIÓN");
+      throw new Error("Credenciales inválidas");
     }
     return credential.id;
     } catch (error: any) {
-    throw new Error(error);
+    throw error;
   }
 };
