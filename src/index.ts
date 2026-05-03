@@ -15,6 +15,6 @@ AppDataSource.initialize()
 }));
     server.use(express.json());
     server.use(router);
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT || 3000, () => console.log(`Server running on port ${PORT || 3000}`));
   })
   .catch((error) => console.error("Error initializing data source:", error));

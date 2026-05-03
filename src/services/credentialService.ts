@@ -1,12 +1,16 @@
 import { Credential } from "../entities/Credential";
 import { AppDataSource } from "../config/dataSource";
 import console from "console";
+import { User } from "../entities";
 
 export const createCredentialsService = async (
   username: string,
   password: string,
-): Promise<Credential | number | undefined> => {
+): Promise<number | undefined> => {
   try {
+    if (!username && !password) {
+      throw new Error("Username and password are required");
+    }
     const newCredential = await AppDataSource.manager.save(Credential, {
       username,
       password,
@@ -21,15 +25,54 @@ export const createCredentialsService = async (
 export const validateCredentialsService = async (
   username: string,
   password: string,
-): Promise<number | undefined> => {
+): Promise<
+  | number
+  | undefined
+  | {
+      login: boolean;
+      id: number;
+      username: string;
+      birthdate: Date;
+      email: string;
+      name: string;
+      nDni: number;
+    }
+> => {
   try {
-    const credential = await AppDataSource.getRepository(Credential).findOneBy({ username });
-    if (!credential || !password ||credential.password?.trim() !== password?.trim()) {
+    if (!username || !password) {
+      throw new Error("Username and password are required");
+    }
+    const credential = await AppDataSource.getRepository(Credential).findOneBy({
+      username,
+    });
+    if (!credential) {
+      throw new Error("Credenciales inválidas");
+    }
+    const user = await AppDataSource.getRepository(User).findOne({
+      where: { credential: { id: credential.id } },
+      relations: { credential: true, appointments: true },
+    });
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+    if (
+      !credential ||
+      !password ||
+      credential.password?.trim() !== password?.trim()
+    ) {
       console.log("FALLÓ LA COMPARACIÓN");
       throw new Error("Credenciales inválidas");
     }
-    return credential.id;
-    } catch (error: any) {
+    return {
+      login: true,
+      id: credential.id,
+      username: credential.username,
+      birthdate: user.birthdate,
+      email: user.email,
+      name: user.name,
+      nDni: user.nDni,
+    };
+  } catch (error: any) {
     throw error;
   }
 };

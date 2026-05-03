@@ -57,11 +57,18 @@ export const createAppointmentService = async (
 };
 
 export const cancelAppointmentService = async (id: number): Promise<void> => {
-  const appointment = await AppDataSource.manager
-    .getRepository(Appointment)
-    .findOne({ where: { id } });
-  if (!appointment) {
-    throw new Error("Turno no encontrado");
+  try {
+    const appointment = await AppDataSource.manager
+      .getRepository(Appointment)
+      .findOne({ where: { id } });
+    if (!appointment) {
+      throw new Error("Turno no encontrado");
+    }
+    const status = Status.CANCELLED;
+    await AppDataSource.manager
+      .getRepository(Appointment)
+      .update(id, { status });
+  } catch (error: any) {
+    throw new Error(` Error al cancelar el turno: ${error.message}`);
   }
-  appointment.status = Status.CANCELLED;
 };
