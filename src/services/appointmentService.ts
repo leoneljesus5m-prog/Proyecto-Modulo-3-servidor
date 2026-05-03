@@ -27,11 +27,11 @@ export const getAllAppointments = async (): Promise<Appointment[]> => {
 
 export const getAppointmentById = async (
   id: number,
-): Promise<Appointment | null> => {
-  return await AppDataSource.manager.getRepository(Appointment).findOne({
+): Promise<User | null> => {
+  return await AppDataSource.manager.getRepository(User).findOne({
     where: { id },
     relations: {
-      user: { credential: true },
+      appointments: { user: true },
     },
   });
 };
@@ -39,6 +39,9 @@ export const getAppointmentById = async (
 export const createAppointmentService = async (
   appointmentData: AppointmentDto,
 ): Promise<Appointment> => {
+  if (typeof appointmentData.userId !== "number") {
+    throw new Error("ID de usuario inválido");
+  }
   const user = await AppDataSource.manager
     .getRepository(User)
     .findOne({ where: { id: appointmentData.userId } });

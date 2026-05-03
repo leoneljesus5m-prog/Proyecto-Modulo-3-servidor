@@ -31,8 +31,8 @@ export const createAppointment = async (req: Request, res: Response) => {
         await createAppointmentService(appointmentData);
         res.status(201).json({ message: "Turno agendado correctamente" });
         res.json(appointmentData);
-    } catch (error) {
-        res.status(500).json({ message: "Error al agendar el turno" });
+    } catch (error: any) {
+        res.status(500).json({ message: `Error al agendar el turno: ${error.message}` });
     }
 }
 
