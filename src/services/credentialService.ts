@@ -65,7 +65,7 @@ export const validateCredentialsService = async (
     }
     return {
       login: true,
-      id: credential.id,
+      id: user.id,
       username: credential.username,
       birthdate: user.birthdate,
       email: user.email,

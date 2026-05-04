@@ -44,7 +44,7 @@ export const createAppointmentService = async (
   }
   const user = await AppDataSource.manager
     .getRepository(User)
-    .findOne({ where: { id: appointmentData.userId } });
+    .findOne({ where: { id: Number(appointmentData.userId) } });
   if (!user) throw new Error("Usuario no encontrado");
 
   const newAppointment = AppDataSource.manager
